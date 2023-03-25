@@ -13,14 +13,15 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers("/h2-console/**");
+        return web -> web.ignoring().antMatchers("/h2-console/**", "/v1/ranking/**");
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authz ->
                 authz.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults());
+                .csrf().disable()
+                .httpBasic();
         return http.build();
     }
 
