@@ -21,4 +21,6 @@ public class MatchResponseDto {
     private int rightAnswers;
 
     private int wrongAnswers;
+
+    private boolean active;
 }

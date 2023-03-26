@@ -40,6 +40,6 @@ public class RankingController {
     })
     @GetMapping
     public ResponseEntity<List<RankingDto>> rankingList() {
-        return new ResponseEntity<>(this.rankingService.getRanking(), HttpStatus.CREATED);
+        return new ResponseEntity<>(this.rankingService.getRanking(), HttpStatus.OK);
     }
 }

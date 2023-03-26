@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 import tech.ada.moviesbattle.config.MoviePropertiesConfig;
 import tech.ada.moviesbattle.dto.MovieImdbDto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,9 +23,14 @@ public class ImdbService {
     }
 
     public List<MovieImdbDto> loadMovies() {
-        return IntStream.rangeClosed(1, moviePropertiesConfig.getNumOfMoviesLoaded())
-                .mapToObj(this::requestMovie)
-                .collect(Collectors.toList());
+        List<MovieImdbDto> list = new ArrayList<>();
+        for (int i = 100; i <= moviePropertiesConfig.getNumOfMoviesLoaded()+100; i++) {
+            MovieImdbDto dto = requestMovie(i);
+            if (dto != null) {
+                list.add(dto);
+            }
+        }
+        return list;
     }
 
     MovieImdbDto requestMovie(int i) {
@@ -33,6 +39,13 @@ public class ImdbService {
                 moviePropertiesConfig.getImdbApiKey(),
                 formatImdbId(i));
         //tratar erro caso não encontre o filme
-        return restTemplate.getForObject(url, MovieImdbDto.class);
+        //tem situações em que o número de votos é vazio ou contém . e ,
+        MovieImdbDto dto = null;
+        try {
+            dto = restTemplate.getForObject(url, MovieImdbDto.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return dto;
     }
 }

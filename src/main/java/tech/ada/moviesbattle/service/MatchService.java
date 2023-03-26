@@ -70,14 +70,7 @@ public class MatchService {
         match.setActive(false);
         matchRepository.save(match);
 
-        return MatchResponseDto.builder()
-                .id(match.getId())
-                .rightAnswers(match.getRightAnswers())
-                .wrongAnswers(match.getWrongAnswers())
-                .movieOne(new MovieDto(match.getLastRound().getMovieOne()))
-                .movieTwo(new MovieDto(match.getLastRound().getMovieTwo()))
-                .user(userDB.getUsername())
-                .build();
+        return buildMatchResponseDto(match);
     }
 
     public MatchResponseDto answerRound(AnswerDto answer, User user) {
@@ -134,6 +127,7 @@ public class MatchService {
                 .movieOne(new MovieDto(match.getLastRound().getMovieOne()))
                 .movieTwo(new MovieDto(match.getLastRound().getMovieTwo()))
                 .user(match.getUser().getUsername())
+                .active(match.isActive())
                 .build();
     }
 }

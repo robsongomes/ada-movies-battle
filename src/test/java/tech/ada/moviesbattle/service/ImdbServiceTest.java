@@ -29,9 +29,9 @@ class ImdbServiceTest {
     void loadMovies() {
         Mockito.when(config.getNumOfMoviesLoaded()).thenReturn(5);
         service.loadMovies();
-        Mockito.verify(restTemplate, Mockito.times(5)).getForObject(Mockito.anyString(), Mockito.any());
-        Mockito.verify(config, Mockito.times(5)).getImdbApiKey();
-        Mockito.verify(config, Mockito.times(5)).getImdbApiUrl();
+        Mockito.verify(restTemplate, Mockito.times(6)).getForObject(Mockito.anyString(), Mockito.any());
+        Mockito.verify(config, Mockito.times(6)).getImdbApiKey();
+        Mockito.verify(config, Mockito.times(6)).getImdbApiUrl();
     }
 
     @Test

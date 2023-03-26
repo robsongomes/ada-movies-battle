@@ -97,6 +97,7 @@ class MatchServiceTest {
         Match activeMatch = Match.builder()
                 .id(1)
                 .active(true)
+                .user(user)
                 .lastRound(Round.builder()
                         .movieOne(new Movie())
                         .movieTwo(new Movie())

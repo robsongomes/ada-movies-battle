@@ -13,7 +13,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class RoundService {
 
-    private MovieRepository movieRepository;
+    private final MovieRepository movieRepository;
 
     public Movie checkWinnerRoundMovie(final Round round) {
         final double scoreOne = round.getMovieOne().getRating() * round.getMovieOne().getVotes();
