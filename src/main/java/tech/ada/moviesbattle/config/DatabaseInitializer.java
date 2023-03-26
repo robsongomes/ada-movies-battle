@@ -24,7 +24,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         loadUsers();
-//        loadMovies();
+        loadMovies();
     }
 
     private void loadUsers() {

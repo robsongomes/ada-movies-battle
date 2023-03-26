@@ -16,13 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import tech.ada.moviesbattle.dto.AnswerDto;
 import tech.ada.moviesbattle.dto.MatchResponseDto;
-import tech.ada.moviesbattle.dto.RankingDto;
 import tech.ada.moviesbattle.entity.User;
 import tech.ada.moviesbattle.exception.*;
 import tech.ada.moviesbattle.service.MatchService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Tag(name = "Match API", description = "REST API that control all the game operations.")
 @SecurityScheme(
@@ -55,7 +51,7 @@ public class MatchController {
                     content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = GameNotFoundException.class)
+                                    schema = @Schema(implementation = MatchNotFoundException.class)
                             )
                     }
             ),
@@ -97,7 +93,7 @@ public class MatchController {
                     content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = GameNotFoundException.class)
+                                    schema = @Schema(implementation = MatchNotFoundException.class)
                             )
                     }
             ),
@@ -114,7 +110,7 @@ public class MatchController {
     }
     )
     @PostMapping(path = "/stop")
-    public ResponseEntity<MatchResponseDto> stopMatch(Authentication authentication) throws GameNotFoundException, UserNotFoundException {
+    public ResponseEntity<MatchResponseDto> stopMatch(Authentication authentication) throws MatchNotFoundException, UserNotFoundException {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(this.service.stopMatch(user), HttpStatus.CREATED);
     }
@@ -139,7 +135,7 @@ public class MatchController {
                     content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = GameNotFoundException.class)
+                                    schema = @Schema(implementation = MatchNotFoundException.class)
                             )
                     }
             ),
@@ -177,7 +173,7 @@ public class MatchController {
     )
     @PostMapping(path = "/round")
     public ResponseEntity<MatchResponseDto> answerRound(@RequestBody final AnswerDto answer, Authentication authentication)
-            throws GameNotFoundException, UserNotFoundException, MovieNotFoundException, MaximumTriesReachedException {
+            throws MatchNotFoundException, UserNotFoundException, MovieNotFoundException, MaximumTriesReachedException {
         User user = (User) authentication.getPrincipal();
         return new ResponseEntity<>(this.service.answerRound(answer, user), HttpStatus.CREATED);
     }

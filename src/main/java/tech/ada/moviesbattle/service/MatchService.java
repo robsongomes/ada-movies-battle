@@ -3,9 +3,8 @@ package tech.ada.moviesbattle.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import tech.ada.moviesbattle.dto.AnswerDto;
-import tech.ada.moviesbattle.dto.MatchResponseDto;
-import tech.ada.moviesbattle.dto.MovieDto;
+import tech.ada.moviesbattle.config.MoviePropertiesConfig;
+import tech.ada.moviesbattle.dto.*;
 import tech.ada.moviesbattle.entity.Match;
 import tech.ada.moviesbattle.entity.Movie;
 import tech.ada.moviesbattle.entity.Round;
@@ -22,38 +21,38 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MatchService {
 
+    private final RoundService roundService;
+
     private final UserRepository userRepository;
 
     private final MovieRepository movieRepository;
 
     private final MatchRepository matchRepository;
 
-    @Value("${maxTries}")
-    private int maxTries;
+    private final MoviePropertiesConfig moviePropertiesConfig;
 
     public MatchResponseDto startMatch(User user) {
         User userDB = this.userRepository.findByUsername(user.getUsername()).orElseThrow(UserNotFoundException::new);
 
-        //verifica se ja existe um game ativo
-        this.matchRepository.findMatchByUserAndActiveTrue(userDB).ifPresent(m -> {throw new GameActiveException();});
+        //verifica se ja existe uma partida ativa
+        this.matchRepository.findMatchByUserAndActiveTrue(user).ifPresent(m -> { throw new GameActiveException(); });
 
         //cria a partida
-        Match newMatch = new Match();
-        newMatch.setUser(userDB);
-        newMatch.setActive(true);
-        newMatch.setRightAnswers(0);
-        newMatch.setWrongAnswers(0);
+        Match newMatch = Match.builder()
+                .user(userDB)
+                .active(true)
+                .build();
 
         //seleciona filmes aleatórios
-        Round round = generateRandomRound();
+        Round round = roundService.generateRandomRound();
         round.setMatch(newMatch);
 
         newMatch.setLastRound(round);
+
         final Set<Round> rounds = new HashSet<>();
         rounds.add(round);
         newMatch.setRounds(rounds);
 
-        //será que tá salvando o round?
         Match matchDB = this.matchRepository.save(newMatch);
 
         MatchResponseDto response = new MatchResponseDto();
@@ -67,7 +66,7 @@ public class MatchService {
 
     public MatchResponseDto stopMatch(User user) {
         User userDB = this.userRepository.findByUsername(user.getUsername()).orElseThrow(UserNotFoundException::new);
-        Match match = this.matchRepository.findMatchByUserAndActiveTrue(userDB).orElseThrow(GameNotFoundException::new);
+        Match match = this.matchRepository.findMatchByUserAndActiveTrue(userDB).orElseThrow(MatchNotFoundException::new);
         match.setActive(false);
         matchRepository.save(match);
 
@@ -80,78 +79,61 @@ public class MatchService {
                 .user(userDB.getUsername())
                 .build();
     }
+
     public MatchResponseDto answerRound(AnswerDto answer, User user) {
-        User userDB = this.userRepository.findByUsername(user.getUsername()).orElseThrow(UserNotFoundException::new);
-        Match match = this.matchRepository.findMatchByUserAndActiveTrue(userDB).orElseThrow(GameNotFoundException::new);
+        User userDB = userRepository.findByUsername(user.getUsername()).orElseThrow(UserNotFoundException::new);
+        Match match = matchRepository.findMatchByUserAndActiveTrue(user).orElseThrow(MatchNotFoundException::new);
 
-        //verifica se excedeu o número de tentativas
-        if (match.getWrongAnswers() >= maxTries) {
-            throw new MaximumTriesReachedException();
-        }
+        if (match.getWrongAnswers() >= moviePropertiesConfig.getMaxTries()) throw new MaximumTriesReachedException();
 
-        //verifica o vencedor e atualizar o placar
         Round lastRound = match.getLastRound();
+        Movie winner = roundService.checkWinnerRoundMovie(lastRound);
+        Movie playerAnswer = movieRepository.findById(answer.getMovieId()).orElseThrow(MovieNotFoundException::new);
 
-        Movie winner = checkWinnerRoundMovie(lastRound);
-        Movie movieAnswer = movieRepository.findById(answer.getMovieId()).orElseThrow(MovieNotFoundException::new);
+        updateMatchScore(match, lastRound, winner, playerAnswer);
 
-        //seta a resposta do usuário
+        if (match.getWrongAnswers() >= moviePropertiesConfig.getMaxTries()) throw new MaximumTriesReachedException();
+
+        generateNextRound(match);
+
+        matchRepository.save(match);
+
+        return buildMatchResponseDto(match);
+    }
+
+    private Match getMatchByUser(User user) {
+        return this.matchRepository.findMatchByUserAndActiveTrue(user)
+                .orElseThrow(MatchNotFoundException::new);
+    }
+
+    private void updateMatchScore(Match match, Round lastRound, Movie winner, Movie movieAnswer) {
         lastRound.setMovieAnswer(movieAnswer);
-
         if (winner.equals(movieAnswer)) {
             match.setRightAnswers(match.getRightAnswers() + 1);
             lastRound.setCorrect(true);
         } else {
             match.setWrongAnswers(match.getWrongAnswers() + 1);
         }
+    }
 
-        //verifica se excedeu o número de tentativas
-        if (match.getWrongAnswers() < maxTries) {
-            Round round = generateRandomRound();
-            //verificar se o round já foi anteriormente usado
-            //pode causar um loop infinito caso não encontre uma combinação
-            while (isRoundRepeated(match, round)) {
-                round = generateRandomRound();
-            }
-            round.setMatch(match);
-            match.getRounds().add(round);
-            match.setLastRound(round);
-        } else {
-            throw new MaximumTriesReachedException();
+    private void generateNextRound(Match match) {
+        Round round = roundService.generateRandomRound();
+        while (roundService.isRoundRepeated(match.getRounds(), round)) {
+            round = roundService.generateRandomRound();
         }
+        round.setMatch(match);
+        match.getRounds().add(round);
+        match.setLastRound(round);
+    }
 
-        match = this.matchRepository.save(match);
-
-        //SETAR OS CAMPOS
+    private MatchResponseDto buildMatchResponseDto(Match match) {
         return MatchResponseDto.builder()
                 .id(match.getId())
                 .rightAnswers(match.getRightAnswers())
                 .wrongAnswers(match.getWrongAnswers())
                 .movieOne(new MovieDto(match.getLastRound().getMovieOne()))
                 .movieTwo(new MovieDto(match.getLastRound().getMovieTwo()))
-                .user(userDB.getUsername())
+                .user(match.getUser().getUsername())
                 .build();
-    }
-
-    private static boolean isRoundRepeated(Match match, Round round) {
-        return match.getRounds().stream().anyMatch(r -> r.equals(round));
-    }
-
-    private Round generateRandomRound() {
-        Movie movie1 = this.movieRepository.findFirstByMovie();
-        Movie movie2 = this.movieRepository.findFirstByMovie();
-        while (movie1.equals(movie2)) {
-            movie2 = this.movieRepository.findFirstByMovie();
-        }
-        Round round = new Round();
-        round.setMovieOne(movie1);
-        round.setMovieTwo(movie2);
-        return round;
-    }
-
-    public Movie checkWinnerRoundMovie(final Round round) {
-        final double scoreOne = round.getMovieOne().getRating() * round.getMovieOne().getVotes();
-        final double scoreTwo = round.getMovieTwo().getRating() * round.getMovieTwo().getVotes();
-        return scoreOne > scoreTwo ? round.getMovieOne() : round.getMovieTwo();
     }
 }

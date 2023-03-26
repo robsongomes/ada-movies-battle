@@ -39,10 +39,7 @@ public class RankingController {
             )
     })
     @GetMapping
-    public ResponseEntity<List<RankingDto>> answerRound() {
-        List<RankingDto> ranking = new ArrayList<>();
-        ranking.add(RankingDto.builder().username("player1").points(150).build());
-        ranking.add(RankingDto.builder().username("player2").points(120).build());
+    public ResponseEntity<List<RankingDto>> rankingList() {
         return new ResponseEntity<>(this.rankingService.getRanking(), HttpStatus.CREATED);
     }
 }

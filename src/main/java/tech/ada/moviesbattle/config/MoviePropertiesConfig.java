@@ -9,7 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class MoviePropertiesConfig {
 
+    private int maxTries;
+
     private String imdbApiKey;
+
+    private String imdbApiUrl;
 
     private int numOfMoviesLoaded;
 }

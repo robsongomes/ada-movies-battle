@@ -17,7 +17,9 @@ public class ImdbService {
 
     private final MoviePropertiesConfig moviePropertiesConfig;
 
-    private static final String PREFIX = "tt";
+    public String formatImdbId(int id) {
+        return String.format("tt%07d", id);
+    }
 
     public List<MovieImdbDto> loadMovies() {
         return IntStream.rangeClosed(1, moviePropertiesConfig.getNumOfMoviesLoaded())
@@ -25,14 +27,12 @@ public class ImdbService {
                 .collect(Collectors.toList());
     }
 
-    private MovieImdbDto requestMovie(int i) {
-        String id = generateID(i+100);
-        String url = String.format("%s?apiKey=%s&i=%s", "https://www.omdbapi.com", moviePropertiesConfig.getImdbApiKey(), id );
+    MovieImdbDto requestMovie(int i) {
+        String url = String.format("%s?apiKey=%s&i=%s",
+                moviePropertiesConfig.getImdbApiUrl(),
+                moviePropertiesConfig.getImdbApiKey(),
+                formatImdbId(i));
         //tratar erro caso não encontre o filme
         return restTemplate.getForObject(url, MovieImdbDto.class);
-    }
-
-    private String generateID(int n) {
-        return PREFIX + String.format("%07d", n);
     }
 }
