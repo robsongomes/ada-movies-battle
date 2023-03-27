@@ -51,19 +51,19 @@ Para autenticação na API são disponibilizados, por padrão, os seguintes usu�
 
 ### Endpoints
 
-####Iniciar uma partida
+#### Iniciar uma partida
 
 _POST /v1/match/new_
 
-####NEXT QUIZ
+#### NEXT QUIZ
 
 _POST /v1/match/round_
 
-####STOP GAME
+#### STOP GAME
 
 _POST /v1/match/stop_
 
-####RANKING
+#### RANKING
 
 _GET /v1/ranking_
 
