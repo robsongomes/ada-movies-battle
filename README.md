@@ -98,7 +98,7 @@ Compilar e testar:
     mvn clean install
 
 ## Relatório de Cobertura do Testes
-https://github.com/jashkenas/backbone/tree/master/examples/todos
+
 O relatório de cobertura dos testes pode ser visualizado clicando no link abaixo:
 
 [Visualizar Relatório de Cobertura](https://htmlpreview.github.io/?https://github.com/robsongomes/ada-movies-battle/blob/main/htmlReport/index.html)
