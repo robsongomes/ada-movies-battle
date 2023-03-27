@@ -101,4 +101,4 @@ Compilar e testar:
 
 O relatório de cobertura dos testes pode ser visualizado clicando no link abaixo:
 
-[Visualizar Relatório de Cobertura](https://htmlpreview.github.io/?https://github.com/robsongomes/ada-movies-battle/htmlReport/index.html)
+[Visualizar Relatório de Cobertura](https://htmlpreview.github.io/?https://github.com/robsongomes/ada-movies-battle/tree/main/htmlReport/index.html)
