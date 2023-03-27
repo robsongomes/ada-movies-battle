@@ -1,0 +1,104 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MatchRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tech.ada.moviesbattle.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MatchRepository (tech.ada.moviesbattle.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MatchRepository$MockitoMock$B9xb4zTj</td>
+  </tr>
+  <tr>
+    <td class="name">MatchRepository$MockitoMock$B9xb4zTj$auxiliary$gHYpNZpn</td>
+  </tr>
+  <tr>
+    <td class="name">MatchRepository$MockitoMock$B9xb4zTj$auxiliary$vRqjhshl</td>
+  </tr>
+  <tr>
+    <td class="name">MatchRepository$MockitoMock$B9xb4zTj$auxiliary$xtQQ1cwP</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tech.ada.moviesbattle.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import tech.ada.moviesbattle.dto.RankingDto;
+&nbsp;import tech.ada.moviesbattle.dto.RankingProjection;
+&nbsp;import tech.ada.moviesbattle.entity.Match;
+&nbsp;import tech.ada.moviesbattle.entity.User;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;public interface MatchRepository extends JpaRepository&lt;Match, Long&gt; {
+&nbsp;
+&nbsp;    Optional&lt;Match&gt; findMatchByUserAndActiveTrue(User user);
+&nbsp;
+&nbsp;    @Query(value = &quot;select u.username as username, round(sum(m.right_answers / ( (m.wrong_answers + m.right_answers) / 100.0))) as points\n&quot; +
+&nbsp;            &quot;from users u join matches m on (m.user_id = u.id) \n&quot; +
+&nbsp;            &quot;where m.active = false \n&quot; +
+&nbsp;            &quot;and (m.wrong_answers != 0 and m.right_answers != 0) \n&quot; +
+&nbsp;            &quot;group by u.username \n&quot; +
+&nbsp;            &quot;order by points desc \n&quot; +
+&nbsp;            &quot;limit 5&quot;, nativeQuery = true)
+&nbsp;    List&lt;RankingProjection&gt; ranking();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-27 08:04</div>
+</div>
+</body>
+</html>

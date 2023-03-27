@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MoviesBattleApplication</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tech.ada.moviesbattle</a>
+</div>
+
+<h1>Coverage Summary for Class: MoviesBattleApplication (tech.ada.moviesbattle)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MoviesBattleApplication</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.7%
+  </span>
+  <span class="absValue">
+    (18/19)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MoviesBattleApplication$$EnhancerBySpringCGLIB$$75b66fca</td>
+  </tr>
+  <tr>
+    <td class="name">MoviesBattleApplication$$EnhancerBySpringCGLIB$$75b66fca$$FastClassBySpringCGLIB$$8c44a6f</td>
+  </tr>
+  <tr>
+    <td class="name">MoviesBattleApplication$$FastClassBySpringCGLIB$$b0e8e8ca</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.7%
+  </span>
+  <span class="absValue">
+    (18/19)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tech.ada.moviesbattle;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.models.OpenAPI;
+&nbsp;import io.swagger.v3.oas.models.info.Info;
+&nbsp;import io.swagger.v3.oas.models.info.License;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.boot.ApplicationArguments;
+&nbsp;import org.springframework.boot.ApplicationRunner;
+&nbsp;import org.springframework.boot.SpringApplication;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
+&nbsp;import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+&nbsp;import org.springframework.boot.web.client.RestTemplateBuilder;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Profile;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;import tech.ada.moviesbattle.dto.MovieImdbDto;
+&nbsp;import tech.ada.moviesbattle.entity.User;
+&nbsp;import tech.ada.moviesbattle.repository.MovieRepository;
+&nbsp;import tech.ada.moviesbattle.repository.UserRepository;
+&nbsp;import tech.ada.moviesbattle.service.ImdbService;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@SpringBootApplication
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@ConfigurationPropertiesScan
+&nbsp;public class MoviesBattleApplication implements ApplicationRunner {
+&nbsp;
+&nbsp;    private final UserRepository repository;
+&nbsp;    private final MovieRepository movieRepository;
+&nbsp;    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+&nbsp;    private final ImdbService imdbService;
+&nbsp;
+&nbsp;    public static void main(String[] args) {
+<b class="nc">&nbsp;        SpringApplication.run(MoviesBattleApplication.class, args);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public OpenAPI springShopOpenAPI() {
+<b class="fc">&nbsp;        return new OpenAPI()</b>
+<b class="fc">&nbsp;                .info(new Info().title(&quot;Movies Battle&quot;)</b>
+<b class="fc">&nbsp;                        .description(&quot;REST API for a card game style application, &quot; +</b>
+&nbsp;                                &quot;where two movies will be informed and the player must choose &quot; +
+&nbsp;                                &quot;the one with the best rating on IMDB. A match can have one or several rounds, and &quot; +
+&nbsp;                                &quot;the user can make up to three mistakes in each match. &quot; +
+&nbsp;                                &quot;The user can end the game at any time, but can only start a new game &quot; +
+&nbsp;                                &quot;if no game has started.&quot;)
+<b class="fc">&nbsp;                        .version(&quot;v0.0.1&quot;)</b>
+<b class="fc">&nbsp;                        .license(new License().name(&quot;Apache 2.0&quot;).url(&quot;http://springdoc.org&quot;)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void run(ApplicationArguments args) throws Exception {
+<b class="fc">&nbsp;        loadUsers();</b>
+<b class="fc">&nbsp;        loadMoviesFromImdbAPI();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void loadUsers() {
+<b class="fc">&nbsp;        User player1 = new User();</b>
+<b class="fc">&nbsp;        player1.setUsername(&quot;player1&quot;);</b>
+<b class="fc">&nbsp;        player1.setPassword(bCryptPasswordEncoder.encode(&quot;123456&quot;));</b>
+<b class="fc">&nbsp;        User player2 = new User();</b>
+<b class="fc">&nbsp;        player2.setUsername(&quot;player2&quot;);</b>
+<b class="fc">&nbsp;        player2.setPassword(bCryptPasswordEncoder.encode(&quot;123456&quot;));</b>
+<b class="fc">&nbsp;        this.repository.save(player1);</b>
+<b class="fc">&nbsp;        this.repository.save(player2);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    private void loadMoviesFromImdbAPI() {
+<b class="fc">&nbsp;        List&lt;MovieImdbDto&gt; movies = this.imdbService.loadMovies();</b>
+<b class="fc">&nbsp;        movies.stream().map(MovieImdbDto::toMovie).forEach(this.movieRepository::save);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-27 08:04</div>
+</div>
+</body>
+</html>

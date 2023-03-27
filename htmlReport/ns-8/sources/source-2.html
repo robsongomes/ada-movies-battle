@@ -1,0 +1,92 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MovieRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tech.ada.moviesbattle.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: MovieRepository (tech.ada.moviesbattle.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">MovieRepository$MockitoMock$0W1I0a36</td>
+  </tr>
+  <tr>
+    <td class="name">MovieRepository$MockitoMock$0W1I0a36$auxiliary$8BHyF58Y</td>
+  </tr>
+  <tr>
+    <td class="name">MovieRepository$MockitoMock$0W1I0a36$auxiliary$rBQmlJVT</td>
+  </tr>
+  <tr>
+    <td class="name">MovieRepository$MockitoMock$0W1I0a36$auxiliary$X0aLgN2X</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tech.ada.moviesbattle.repository;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import tech.ada.moviesbattle.entity.Movie;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface MovieRepository extends JpaRepository&lt;Movie, String&gt; {
+&nbsp;
+&nbsp;    @Query(value = &quot;SELECT * FROM movies m ORDER BY RAND() LIMIT 1&quot;, nativeQuery = true)
+&nbsp;    Movie findFirstByMovie();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-27 08:04</div>
+</div>
+</body>
+</html>

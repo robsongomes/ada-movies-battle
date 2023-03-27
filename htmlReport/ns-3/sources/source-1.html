@@ -1,0 +1,283 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MatchController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tech.ada.moviesbattle.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: MatchController (tech.ada.moviesbattle.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MatchController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tech.ada.moviesbattle.controller;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponses;
+&nbsp;import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+&nbsp;import io.swagger.v3.oas.annotations.security.SecurityScheme;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import tech.ada.moviesbattle.dto.AnswerDto;
+&nbsp;import tech.ada.moviesbattle.dto.MatchResponseDto;
+&nbsp;import tech.ada.moviesbattle.entity.User;
+&nbsp;import tech.ada.moviesbattle.exception.*;
+&nbsp;import tech.ada.moviesbattle.service.MatchService;
+&nbsp;
+&nbsp;@Tag(name = &quot;Match API&quot;, description = &quot;REST API that control all the game operations.&quot;)
+&nbsp;@SecurityScheme(
+&nbsp;        type = SecuritySchemeType.HTTP,
+&nbsp;        name = &quot;basicAuth&quot;,
+&nbsp;        scheme = &quot;basic&quot;)
+&nbsp;@RestController
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RequestMapping(&quot;/v1/match/&quot;)
+&nbsp;public class MatchController {
+&nbsp;
+&nbsp;    private final MatchService service;
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Start a match(game) if it does not exist a previous game active. \nEach game has unique rounds&quot;)
+&nbsp;    @SecurityRequirement(name = &quot;basicAuth&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;201&quot;,
+&nbsp;                    description = &quot;Info about the match created&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MatchResponseDto.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;409&quot;,
+&nbsp;                    description = &quot;There is already a match active. You should stop it before start new one&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MatchNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;404&quot;,
+&nbsp;                    description = &quot;User not found or Invalid Credentials&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = UserNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;        }
+&nbsp;    )
+&nbsp;    @PostMapping(path = &quot;/new&quot;)
+&nbsp;    public ResponseEntity&lt;MatchResponseDto&gt; startMatch(Authentication authentication) throws UserNotFoundException, GameActiveException {
+<b class="fc">&nbsp;        User user = (User) authentication.getPrincipal();</b>
+<b class="fc">&nbsp;        MatchResponseDto match = this.service.startMatch(user);</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(match, HttpStatus.CREATED);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Stop an active match(game)&quot;)
+&nbsp;    @SecurityRequirement(name = &quot;basicAuth&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;201&quot;,
+&nbsp;                    description = &quot;Info about the match stopped&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MatchResponseDto.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;409&quot;,
+&nbsp;                    description = &quot;There is already a match active. You should stop it before start new one&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MatchNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;404&quot;,
+&nbsp;                    description = &quot;User not found or Invalid Credentials&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = UserNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;    }
+&nbsp;    )
+&nbsp;    @PostMapping(path = &quot;/stop&quot;)
+&nbsp;    public ResponseEntity&lt;MatchResponseDto&gt; stopMatch(Authentication authentication) throws MatchNotFoundException, UserNotFoundException {
+<b class="fc">&nbsp;        User user = (User) authentication.getPrincipal();</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(this.service.stopMatch(user), HttpStatus.CREATED);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Operation(summary = &quot;Endpoint that implements the Round operation. Each request answer the current active Round &quot; +
+&nbsp;            &quot;and generate a new Round while the user does not reach the maximum number of tries&quot;)
+&nbsp;    @SecurityRequirement(name = &quot;basicAuth&quot;)
+&nbsp;    @ApiResponses(value = {
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;201&quot;,
+&nbsp;                    description = &quot;Info about the current match and the next Round&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MatchResponseDto.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;409&quot;,
+&nbsp;                    description = &quot;There is already a match active. You should stop it before start new one&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MatchNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;404&quot;,
+&nbsp;                    description = &quot;User not found or Invalid Credentials&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = UserNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;404&quot;,
+&nbsp;                    description = &quot;Movie not found&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MovieNotFoundException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;            @ApiResponse(
+&nbsp;                    responseCode = &quot;406&quot;,
+&nbsp;                    description = &quot;Maximum of wrong answers reached&quot;,
+&nbsp;                    content = {
+&nbsp;                            @Content(
+&nbsp;                                    mediaType = &quot;application/json&quot;,
+&nbsp;                                    schema = @Schema(implementation = MaximumTriesReachedException.class)
+&nbsp;                            )
+&nbsp;                    }
+&nbsp;            ),
+&nbsp;    }
+&nbsp;    )
+&nbsp;    @PostMapping(path = &quot;/round&quot;)
+&nbsp;    public ResponseEntity&lt;MatchResponseDto&gt; answerRound(@RequestBody final AnswerDto answer, Authentication authentication)
+&nbsp;            throws MatchNotFoundException, UserNotFoundException, MovieNotFoundException, MaximumTriesReachedException {
+<b class="fc">&nbsp;        User user = (User) authentication.getPrincipal();</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;&gt;(this.service.answerRound(answer, user), HttpStatus.CREATED);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-27 08:04</div>
+</div>
+</body>
+</html>

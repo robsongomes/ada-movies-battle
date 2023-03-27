@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MovieImdbDto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">tech.ada.moviesbattle.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: MovieImdbDto (tech.ada.moviesbattle.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MovieImdbDto</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (2/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (10/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package tech.ada.moviesbattle.dto;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import lombok.Data;
+&nbsp;import lombok.ToString;
+&nbsp;import tech.ada.moviesbattle.entity.Movie;
+&nbsp;
+&nbsp;@JsonIgnoreProperties(ignoreUnknown = true)
+<b class="fc">&nbsp;@Data</b>
+<b class="nc">&nbsp;@ToString</b>
+&nbsp;public class MovieImdbDto {
+&nbsp;    @JsonProperty(&quot;imdbID&quot;)
+<b class="nc">&nbsp;    private String id;</b>
+&nbsp;
+&nbsp;    @JsonProperty(&quot;Title&quot;)
+<b class="nc">&nbsp;    private String title;</b>
+&nbsp;
+&nbsp;    @JsonProperty(&quot;imdbRating&quot;)
+<b class="nc">&nbsp;    private double rating;</b>
+&nbsp;
+&nbsp;    @JsonProperty(&quot;Year&quot;)
+<b class="nc">&nbsp;    private String year;</b>
+&nbsp;
+&nbsp;    @JsonProperty(&quot;Genre&quot;)
+<b class="nc">&nbsp;    private String genre;</b>
+&nbsp;
+&nbsp;    @JsonProperty(&quot;Country&quot;)
+<b class="nc">&nbsp;    private String country;</b>
+&nbsp;
+&nbsp;    @JsonProperty(&quot;imdbVotes&quot;)
+<b class="nc">&nbsp;    private int votes;</b>
+&nbsp;
+&nbsp;    public Movie toMovie() {
+&nbsp;        return Movie
+<b class="fc">&nbsp;                .builder()</b>
+<b class="fc">&nbsp;                .id(this.id)</b>
+<b class="fc">&nbsp;                .title(this.title)</b>
+<b class="fc">&nbsp;                .rating(this.rating)</b>
+<b class="fc">&nbsp;                .country(this.country)</b>
+<b class="fc">&nbsp;                .genre(this.genre)</b>
+<b class="fc">&nbsp;                .year(this.year)</b>
+<b class="fc">&nbsp;                .votes(this.votes)</b>
+<b class="fc">&nbsp;                .build();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-27 08:04</div>
+</div>
+</body>
+</html>
